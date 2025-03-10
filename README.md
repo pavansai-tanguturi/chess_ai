@@ -41,7 +41,7 @@ env = DummyVecEnv([lambda: ChessEnv()])
 env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10.0)
 
 model = PPO("MlpPolicy", env, verbose=1, device="cuda")  # Use GPU
-model.learn(total_timesteps=100000)
+model.learn(total_timesteps=10000)
 
 model.save("chess_white_agent.zip")
 env.save("chess_white_env.pkl")
@@ -51,7 +51,7 @@ env.close()
 
 black_env = DummyVecEnv([lambda: ChessEnv()])
 black_model = PPO("MlpPolicy", black_env, verbose=1, device="cuda")
-black_model.learn(total_timesteps=100000)
+black_model.learn(total_timesteps=10000)
 
 black_model.save("chess_black_agent.zip")
 black_env.save("chess_black_env.pkl")
