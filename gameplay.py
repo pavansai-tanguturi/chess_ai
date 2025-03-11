@@ -28,7 +28,7 @@ print("\n♟️ AI vs AI Chess Match Starts! ♟️\n")
 # AI Game Loop
 while not done:
     for model, env, color in [(white_model, white_env, "White"), (black_model, black_env, "Black")]:
-        time.sleep(1)  # ⏳ Add a delay of 2 seconds between moves
+        time.sleep(1)  # ⏳ Add a delay between moves
 
         obs = env.normalize_obs(obs)
         action, _ = model.predict(obs, deterministic=True)
@@ -38,7 +38,9 @@ while not done:
 
         print(f"{color} received reward: {reward}")  # Debug reward values
         print(f"\n{color} (AI) moves:")
-        game_env.render()
+        
+        # ✅ Print the board in text format
+        print(game_env.board)
 
         if done:
             break  # Stop if game ends
