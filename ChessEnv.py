@@ -10,7 +10,7 @@ import cloudpickle
 import dill
 
 class ChessEnv(Env):
-    def __init__(self, stockfish_path="/usr/games/stockfish"):
+    def __init__(self, stockfish_path="/opt/homebrew/bin/stockfish"):
         super().__init__()
         self.board = chess.Board()
         self.engine = chess.engine.SimpleEngine.popen_uci(stockfish_path)

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chess Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard.min.css">
+    <style>
+        #board { width: 400px; margin: 20px auto; }
+        body { text-align: center; font-family: Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h2>AI vs AI Chess</h2>
+    <div id="board"></div>
+    
+    <script>
+        var board = Chessboard('board', { position: 'start' });
+        var game = new Chess();
+
+        async function playAI() {
+            let response = await fetch('/move');
+            let data = await response.json();
+            if (data.status === "Game Over") {
+                alert("Game Over!");
+                return;
+            }
+            game.load(data.fen);
+            board.position(data.fen);
+            setTimeout(playAI, 1000);  // AI makes the next move every second
+        }
+
+        playAI();
+    </script>
+</body>
+</html>
