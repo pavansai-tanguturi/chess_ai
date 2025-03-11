@@ -1,289 +1,136 @@
-Here’s a README.md for your Chess AI Reinforcement Learning project:
+# Chess AI - Reinforcement Learning with PPO  
 
-⸻
+This project is a **Chess AI** trained using **Reinforcement Learning (PPO Algorithm)** with **Stable-Baselines3**.  
+It includes a **Flask-based web interface** where you can play or watch AI chess games.  
 
-Chess AI - Reinforcement Learning (PPO)
+---
 
-This project trains a Chess AI using Reinforcement Learning (RL) with the Proximal Policy Optimization (PPO) algorithm in Stable-Baselines3. The AI learns to play chess by training against itself and can be deployed as an API.
+## 🚀 Features  
 
-Features
-	•	Train AI using PPO algorithm
-	•	Self-play training for White & Black agents
-	•	Play AI vs AI games
-	•	Deploy AI via FastAPI on Railway.app
+✅ **Train a Chess AI** using **Proximal Policy Optimization (PPO)**  
+✅ **AI vs AI Chess Matches** using a trained model  
+✅ **Interactive Web UI** to visualize chess games  
+✅ **Flask API** to interact with the AI  
 
-⸻
+---
 
-1. Setup
+## 🛠️ How It Works  
 
-1.1. Install Dependencies
+1️⃣ **Training the AI** (`Training.py`)  
+   - The AI is trained with **self-play**, where it learns by playing against itself.  
+   - It uses the `ChessEnv.py` environment to make **legal moves** and improve its strategy.  
+   - The trained model is saved for later use.  
 
-pip install stable-baselines3 chess gym-chess numpy torch fastapi uvicorn
+2️⃣ **Playing a Chess Game** (`gameplay.py`)  
+   - Loads the trained **AI model**.  
+   - Runs an **AI vs AI** match step by step.  
+   - Displays the moves on the **chessboard**.  
 
-1.2. Clone the Repository
+3️⃣ **Web Interface (`app.py` + `index.html`)**  
+   - A Flask web server is used to host a **Chess UI**.  
+   - The AI moves are visualized on the chessboard in a **browser**.  
+   - Users can watch the game unfold automatically.  
 
-git clone https://github.com/pavansai-tanguturi/chess_ai.git
+---
+
+## 📌 Installation  
+
+### 1️⃣ Clone the Repository  
+```bash
+git clone <repo-url>
 cd chess_ai
 
 
 
 ⸻
 
-2. Train the Chess AI
+2️⃣ Set Up a Virtual Environment
 
-2.1. Train White AI
+🔹 Option 1: Using venv (Recommended)
 
-from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
-from ChessEnv import ChessEnv
+# Create a virtual environment
+python -m venv venv
 
-env = DummyVecEnv([lambda: ChessEnv()])
-env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10.0)
+# Activate the virtual environment
+# On Windows (cmd/Powershell)
+venv\Scripts\activate
+# On macOS/Linux
+source venv/bin/activate
 
-model = PPO("MlpPolicy", env, verbose=1, device="cuda")  # Use GPU
-model.learn(total_timesteps=10000)
-
-model.save("chess_white_agent.zip")
-env.save("chess_white_env.pkl")
-env.close()
-
-2.2. Train Black AI
-
-black_env = DummyVecEnv([lambda: ChessEnv()])
-black_model = PPO("MlpPolicy", black_env, verbose=1, device="cuda")
-black_model.learn(total_timesteps=10000)
-
-black_model.save("chess_black_agent.zip")
-black_env.save("chess_black_env.pkl")
-black_env.close()
+# Install dependencies
+pip install -r requirements.txt
 
 
 
 ⸻
 
-3. Playing AI vs AI
+🔹 Option 2: Using conda
 
-from stable_baselines3 import PPO
-from ChessEnv import ChessEnv
+# Create a new Conda environment
+conda create --name chess_ai python=3.9
 
-white_model = PPO.load("chess_white_agent.zip")
-black_model = PPO.load("chess_black_agent.zip")
+# Activate the environment
+conda activate chess_ai
 
-env = ChessEnv()
-obs = env.reset()
-
-for _ in range(100):
-    action_white, _ = white_model.predict(obs)
-    obs, _, done, _ = env.step(action_white)
-    if done:
-        break
-
-    action_black, _ = black_model.predict(obs)
-    obs, _, done, _ = env.step(action_black)
-    if done:
-        break
-
-env.render()  # Show AI playing visually
+# Install dependencies
+pip install -r requirements.txt
 
 
 
 ⸻
 
-4. Deploy as API
+3️⃣ Running the Chess AI Web App
 
-4.1. Create app.py
+python app.py
 
-from fastapi import FastAPI
-from ChessEnv import ChessEnv
-from stable_baselines3 import PPO
+🎯 Open the web browser and go to http://127.0.0.1:5000
 
-app = FastAPI()
-model = PPO.load("chess_white_agent.zip")
-env = ChessEnv()
+⸻
 
-@app.get("/move")
-def get_ai_move():
-    obs = env.reset()
-    action, _ = model.predict(obs)
-    obs, _, done, _ = env.step(action)
-    return {"move": action.tolist()}
+🎮 API Endpoints
 
-4.2. Run API
-
-uvicorn app:app --host 0.0.0.0 --port 8000
+Endpoint	Method	Description
+/init_game	POST	Initializes a new game
+/generate_game	POST	Runs AI vs AI game
+/get_move/<index>	GET	Fetches a move from the game
 
 
 
 ⸻
 
-5. Deploy to Railway
-	1.	Push the project to GitHub
+📊 Training the AI
 
-git add .
-git commit -m "Initial commit"
-git push origin main
+To train the AI, run:
 
+python Training.py
 
-	2.	Go to Railway.app
-	3.	Create a new service → GitHub Repo → Deploy
+This will generate a trained model that can be used for playing games.
 
 ⸻
 
-6. Troubleshooting
+🎭 Web Interface
 
-Issue	Solution
-403 GitHub Error	Use a GitHub token instead of a password.
-Colab session disconnects	Re-run GitHub setup & re-authenticate.
-Model training slow	Use device="cuda" to enable GPU training.
-
-
+Once the server is running, you will see:
+🟢 Chessboard UI showing AI moves
+🟢 Move History on the right
+🟢 Game Playback as AI plays against itself
 
 ⸻
 
-7. Credits
-	•	Author: pavansai-tanguturi
-	•	Libraries Used: Stable-Baselines3, Gym-Chess, FastAPI
+🏆 Future Improvements
+
+✅ Add support for human vs AI gameplay
+✅ Improve AI training efficiency
+✅ Add difficulty levels for AI
 
 ⸻
 
-
-Here are some common errors you might face in your Chess AI reinforcement learning project and how to fix them:
-
-⸻
-
-1. GitHub Push Error: 403 Forbidden
-
-Error:
-
-fatal: unable to access 'https://github.com/.../chess_ai.git/': The requested URL returned error: 403
-
-Cause:
-	•	You’re using username & password instead of a GitHub token.
-	•	You may not have write access to the repository.
-
-Solution:
-	•	Use GitHub Personal Access Token (PAT) instead of a password:
-
-git remote set-url origin https://<TOKEN>@github.com/pavansai-tanguturi/chess_ai.git
-
-
-	•	Or use SSH authentication:
-
-git remote set-url origin git@github.com:pavansai-tanguturi/chess_ai.git
-
-
-
-⸻
-
-2. git push Rejected (fetch first required)
-
-Error:
-
-! [rejected]        main -> main (fetch first)
-
-Cause:
-	•	The remote repository has new commits that your local branch doesn’t have.
-
-Solution:
-
-git pull origin main --rebase
-git push origin main
-
-(If conflicts appear, resolve them before pushing.)
-
-⸻
-
-3. Colab Disconnecting (Session Expired)
-
-Error:
-	•	Training stops unexpectedly.
-	•	Files disappear after session restart.
-
-Solution:
-	•	Save models periodically to Google Drive:
-
-from google.colab import drive
-drive.mount('/content/drive')
-model.save("/content/drive/MyDrive/chess_ai_model.zip")
-
-
-	•	Re-authenticate GitHub after reconnecting:
-
-!git config --global user.email "your-email@example.com"
-!git config --global user.name "your-username"
-!git clone https://<TOKEN>@github.com/pavansai-tanguturi/chess_ai.git
-
-
-
-⸻
-
-4. GPU Not Being Used (device=cpu by default)
-
-Error:
-	•	Training is too slow.
-
-Solution:
-	•	Ensure GPU is enabled in Colab:
-Runtime → Change runtime type → GPU
-	•	Set device=“cuda” in PPO model:
-
-model = PPO("MlpPolicy", env, verbose=1, device="cuda")
-
-
-
-⸻
-
-5. ModuleNotFoundError for stable_baselines3 or chess
-
-Error:
-
-ModuleNotFoundError: No module named 'stable_baselines3'
-
-Solution:
-	•	Install missing dependencies:
-
-pip install stable-baselines3 chess gym-chess numpy torch
-
-
-
-⸻
-
-6. API Not Working on Railway (Error 502 Bad Gateway)
-
-Cause:
-	•	FastAPI server is not running properly.
-	•	The port is incorrect.
-
-Solution:
-	•	Use 0.0.0.0 as host and set the correct port:
-
-uvicorn app:app --host 0.0.0.0 --port 8000
-
-
-	•	Add Procfile for Railway:
-
-web: uvicorn app:app --host 0.0.0.0 --port $PORT
-
-
-
-⸻
-
-7. Chess AI Plays Illegal Moves
-
-Cause:
-	•	The AI doesn’t learn enough valid moves.
-	•	The reward function in ChessEnv.py is not well-defined.
-
-Solution:
-	•	Train longer (total_timesteps=200000).
-	•	Modify the reward function:
-
-def reward_function(self):
-    if self.done:
-        return 1 if self.winner == self.current_player else -1
-    return 0.01  # Small reward for valid moves
-
-
-
-⸻
-  
+🚀 Developed using Python, Flask, Stable-Baselines3, and Gym!
+
+---
+
+### 🔥 **What’s New in This README?**  
+✔ **Explains how the Chess AI works** (Training, Playing, Web UI)  
+✔ **Step-by-step guide for installation** (venv + conda)  
+✔ **API documentation included**  
+✔ **Web Interface details**  
