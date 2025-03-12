@@ -32,7 +32,7 @@ white_model = PPO(
 )
 
 # ✅ Train White Model Faster
-white_model.learn(total_timesteps=15000)
+white_model.learn(total_timesteps=10000)
 white_model.save("chess_white_agent (2).zip")
 white_env.save("chess_white_env.pkl")
 white_env.close()
