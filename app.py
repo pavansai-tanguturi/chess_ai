@@ -25,12 +25,12 @@ def load_models():
         env = ChessEnv()
         
         # Load the trained models
-        white_env = VecNormalize.load("chess_white_env.pkl", DummyVecEnv([ChessEnv]))
+        white_env = VecNormalize.load("chess_env.pkl", DummyVecEnv([ChessEnv]))
         white_env.training = False
         white_env.norm_obs = True
         white_model = PPO.load("chess_white_agent.zip", env=white_env)
         
-        black_env = VecNormalize.load("chess_black_env.pkl", DummyVecEnv([ChessEnv]))
+        black_env = VecNormalize.load("chess_env.pkl", DummyVecEnv([ChessEnv]))
         black_env.training = False
         black_env.norm_obs = True
         black_model = PPO.load("chess_black_agent.zip", env=black_env)
@@ -89,8 +89,8 @@ def generate_game():
         done = False
         while not done:
             for model, model_env_path, color in [
-                (white_model, "chess_white_env.pkl", "White"),
-                (black_model, "chess_black_env.pkl", "Black")
+                (white_model, "chess_env.pkl", "White"),
+                (black_model, "chess_env.pkl", "Black")
             ]:
                 if done:
                     break

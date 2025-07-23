@@ -12,8 +12,8 @@ def load_agent(model_path, env_path):
     return PPO.load(model_path, env=env), env
 
 # Load AI agents
-white_model, white_env = load_agent("chess_white_agent.zip", "chess_white_env.pkl")
-black_model, black_env = load_agent("chess_black_agent.zip", "chess_black_env.pkl")
+white_model, white_env = load_agent("chess_white_agent.zip", "chess_env.pkl")
+black_model, black_env = load_agent("chess_black_agent.zip", "chess_env.pkl")
 
 # Initialize game
 game_env = ChessEnv()
