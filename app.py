@@ -79,11 +79,15 @@ def generate_game():
         success = load_models()
         if not success:
             return jsonify({'error': 'Failed to load AI models'})
-    
+
+    # Check if models are loaded
+    if white_model is None or black_model is None:
+        return jsonify({'error': 'AI models are not loaded. Please check model files.'})
+
     # Reset the environment
     obs = env.reset()
     game_moves = []
-    
+
     try:
         # Play the game
         done = False
@@ -94,22 +98,25 @@ def generate_game():
             ]:
                 if done:
                     break
-                
+
+                if model is None:
+                    return jsonify({'error': f'{color} model is not loaded.'})
+
                 # Load the environment
                 model_env = VecNormalize.load(model_env_path, DummyVecEnv([ChessEnv]))
                 model_env.training = False
                 model_env.norm_obs = True
-                
+
                 # Get normalized observation
                 normalized_obs = model_env.normalize_obs(obs)
-                
+
                 # Get action from model
                 action, _ = model.predict(normalized_obs, deterministic=True)
-                
+
                 # Make the move
                 board_before = env.board.copy()
                 obs, reward, done, _ = env.step(action)
-                
+
                 # Record the move
                 if len(env.board.move_stack) > len(board_before.move_stack):
                     last_move = str(env.board.move_stack[-1])
@@ -119,13 +126,13 @@ def generate_game():
                         'move': last_move,
                         'fen': env.board.fen()
                     })
-        
+
         # Return the number of moves
         return jsonify({
             'success': True,
             'total_moves': len(game_moves)
         })
-    
+
     except Exception as e:
         return jsonify({'error': f'Game generation error: {str(e)}'})
 
